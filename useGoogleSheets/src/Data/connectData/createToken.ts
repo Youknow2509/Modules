@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import { oAuth2Client, authorizeUrl } from './oAuth2';
 import fs from 'fs';
-import path from 'path';
 
 const sever: express.Express = express();
 const port: number = 
@@ -11,20 +10,16 @@ const port: number =
 const tokenPath: string = 
     __dirname.split('/').slice(0, -2).join('/') + '/token.json';
 
-sever.get('/',  async (req: Request, res: Response) => {
-    res.redirect(authorizeUrl);
-});
-
-sever.listen(port, () => {
-    console.log(`Server listening on: http://localhost:${port}`);
-});
-
-const writeToken = (tokens: any): void => {
-    fs.writeFileSync(tokenPath, JSON.stringify(tokens));
-};
-
 export const createToken = async () => {
-    
+
+    sever.get('/',  async (req: Request, res: Response) => {
+        res.redirect(authorizeUrl);
+    });
+
+    sever.listen(port, () => {
+        console.log(`Server listening on: http://localhost:${port} create token...`);
+    });
+
     const code: string = await new Promise((resolve) => {
         sever.get('/oauth2callback', (req: Request, res: Response) => {
             const code: string = req.query.code as string;
@@ -38,4 +33,9 @@ export const createToken = async () => {
     await writeToken(tokens);
 
     console.log('Token created successfully');
+    return tokens;
+};
+
+const writeToken = (tokens: any): void => {
+    fs.writeFileSync(tokenPath, JSON.stringify(tokens));
 };

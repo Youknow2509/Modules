@@ -49,15 +49,15 @@ const authorizeUrl: any = oAuth2Client.generateAuthUrl({
     scope: SCOPES,
 });
 
-sever.get('/',  async (req: Request, res: Response) => {
-    res.redirect(authorizeUrl); // Authorized redirect in google console
-});
-
-sever.listen(PORT, () => {
-    console.log(`Server listening on: http://localhost:${PORT}`);
-});
-
 const createToken = async () => {
+
+    sever.get('/',  async (req: Request, res: Response) => {
+        res.redirect(authorizeUrl); // Authorized redirect in google console
+    });
+
+    sever.listen(PORT, () => {
+        console.log(`Server listening on: http://localhost:${PORT}`);
+    });
     
     const code: string = await new Promise((resolve) => {
         // After logging in, it will return to the path '/oauth2callback' and return the data
@@ -72,9 +72,13 @@ const createToken = async () => {
     await oAuth2Client.setCredentials(tokens);
     
     console.log('Token created successfully: ' + tokens);
+    return tokens;
 };
 
-createToken();
+createToken()
+    .catch((error) => {
+        console.log('Error: ', error);
+    });;
 ```
 # Hande database with it
 

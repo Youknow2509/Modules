@@ -2,6 +2,9 @@ import 'dotenv/config';
 import { oAuth2Client, authorizeUrl } from '../connectData/oAuth2';
 import { google } from 'googleapis';
 
+
+export { readData };
+
 /**
  * Read data from a Google Sheets spreadsheet.
  * @param {JSON} token - The token to authenticate the user.
@@ -32,6 +35,8 @@ const readData = async (
         } else {
             console.log('No data found.');
         }
+
+        return rows;
     } catch (err) {
         throw new Error('The API returned an error: ' + err + ' (ERR: readData in )' + __dirname);
     }
@@ -60,4 +65,3 @@ const updateData = async (
     };
 };
 
-export { readData };
