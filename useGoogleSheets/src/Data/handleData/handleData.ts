@@ -2,8 +2,7 @@ import 'dotenv/config';
 import { oAuth2Client, authorizeUrl } from '../connectData/oAuth2';
 import { google } from 'googleapis';
 
-
-export { readData, updateData };
+export { readData, updateData, appendData };
 
 /**
  * Read data from a Google Sheets spreadsheet.
@@ -54,10 +53,9 @@ const updateData = async (
     token: JSON | undefined,
     spreadsheetId: string | undefined,
     range: string | undefined,
-    valueInputOption: string | undefined = "USER_ENTERED",
+    valueInputOption: string | undefined = 'USER_ENTERED',
     _values: string[][] | undefined,
 ): Promise<any> => {
-
     await oAuth2Client.setCredentials(token);
     const googleSheets: any = google.sheets({ version: 'v4', auth: oAuth2Client });
 
@@ -79,7 +77,6 @@ const updateData = async (
     }
 };
 
-
 /**
  * Append data to a Google Sheets spreadsheet.
  * @param {JSON} token - The token to authenticate the user.
@@ -88,7 +85,30 @@ const updateData = async (
  * @param {string} valueInputOption - How the input data should be interpreted. (Example: 'RAW', 'USER_ENTERED')
  * @param {(string[])[]} _values - A 2d array of values to append.
  */
-const appendData = async () => {
-    // TODO
-}
+const appendData = async (
+    token: JSON | undefined,
+    spreadsheetId: string | undefined,
+    range: string | undefined,
+    valueInputOption: string | undefined = 'USER_ENTER',
+    _values: string[][] | undefined,
+) => {
+    await oAuth2Client.setCredentials(token);
+    const googleSheets: any = google.sheets({ version: 'v4', auth: oAuth2Client });
 
+    const resource: any = {
+        values: _values,
+    };
+
+    try {
+        const result = await googleSheets.spreadsheets.values.append({
+            spreadsheetId,
+            range,
+            valueInputOption,
+            resource,
+        });
+        console.log(`${result.data.updates.updatedCells} cells appended.`);
+        return result;
+    } catch (err) {
+        throw new Error('The API returned an error: ' + err + ' (ERR: appendData in )' + __dirname);
+    }
+};
