@@ -126,7 +126,7 @@ const readData = async (
 };
 ```
 
-- **Upgrade, del,... : read at [src](`src/main.ts`)** 
+- **Upgrade, del,... : read at [src](src/)** 
 
 
 
