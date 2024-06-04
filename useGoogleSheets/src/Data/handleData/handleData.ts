@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { oAuth2Client, authorizeUrl } from '../connectData/oAuth2';
 import { google } from 'googleapis';
 
-export { readData, updateData, appendData };
+export { readData, updateData, appendData, clearRowData };
 
 /**
  * Read data from a Google Sheets spreadsheet.
@@ -91,7 +91,7 @@ const appendData = async (
     range: string | undefined,
     valueInputOption: string | undefined = 'USER_ENTER',
     _values: string[][] | undefined,
-) => {
+): Promise<any> => {
     await oAuth2Client.setCredentials(token);
     const googleSheets: any = google.sheets({ version: 'v4', auth: oAuth2Client });
 
@@ -110,5 +110,34 @@ const appendData = async (
         return result;
     } catch (err) {
         throw new Error('The API returned an error: ' + err + ' (ERR: appendData in )' + __dirname);
+    }
+};
+
+/**
+ * Clear row data from a Google Sheets spreadsheet.
+ * @param {JSON} token - The token to authenticate the user.
+ * @param {string} spreadsheetId - The ID of the spreadsheet to clear data from.
+ * @param {string} nameSheet - The name of the sheet to clear data from.
+ * @param {int} row - The row to clear data from.
+ */
+const clearRowData = async (
+    token: JSON | undefined,
+    spreadsheetId: string | undefined,
+    nameSheet: string | undefined,
+    row: number | undefined,
+): Promise<any> => {
+
+    await oAuth2Client.setCredentials(token);
+    const googleSheets: any = google.sheets({ version: 'v4', auth: oAuth2Client });
+
+    try {
+        const result = await googleSheets.spreadsheets.values.clear({
+            spreadsheetId,
+            range: `${nameSheet}!A${row}:Y${row}`,
+        });
+        console.log(`${result.data.updates.updatedCells} cells cleared.`);
+        return result;
+    } catch (err) {
+        throw new Error('The API returned an error: ' + err + ' (ERR: clearRowData in )' + __dirname);
     }
 };
