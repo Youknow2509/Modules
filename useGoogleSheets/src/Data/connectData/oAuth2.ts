@@ -1,7 +1,6 @@
 import 'dotenv/config'
 import { google } from 'googleapis';
 
-const CLIENT_ID: string = process.env.SHEETS_CLIENT_ID || '';
 const SHEETS_CLIENT_ID: string = process.env.SHEETS_CLIENT_ID || '';
 const SHEETS_CLIENT_SECRET: string = process.env.SHEETS_CLIENT_SECRET || '';
 const SHEETS_REDIRECT_URL: string = process.env.SHEETS_REDIRECT_URL || '';
