@@ -76,8 +76,56 @@ const createToken = async () => {
 
 createToken();
 ```
-# Use google OAUTH2
-# Connect api google sheets same database
 # Hande database with it
+
+- *Get data*:
+  - In **CLI**: 
+```shell
+  curl --location --globoff 'https://sheets.googleapis.com/v4/spreadsheets/{YOUR_SHEETS_ID}/values/{RANGE}?access_token={YOUR_TOKEN}'
+```
+
+  - In **Node**:
+```ts
+import 'dotenv/config';
+import { oAuth2Client, authorizeUrl } from 'YOUR_PATH_SAVE_IT';
+import { google } from 'googleapis';
+
+/**
+ * Read data from a Google Sheets spreadsheet.
+ * @param {JSON} token - The token to authenticate the user.
+ * @param {string} spreadsheetId - The ID of the spreadsheet to read data from.
+ * @param {string} range - The range of the spreadsheet to read data from. (Example: 'Users', 'Users!A1:F3')
+ */
+const readData = async (
+    token: JSON | undefined,
+    spreadsheetId: string | undefined,
+    range: string | undefined,
+): Promise<any> => {
+    await oAuth2Client.setCredentials(token);
+    const googleSheets: any = google.sheets({ version: 'v4', auth: oAuth2Client });
+
+    try {
+        const res: any = await googleSheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: range,
+        });
+
+        const rows: any[][] | null | undefined = res.data.values;
+
+        if (rows && rows.length) {
+            console.log('Name sheet and range: ' + range);
+            rows.map(row => {
+                console.log(row);
+            });
+        } else {
+            console.log('No data found.');
+        }
+    } catch (err) {
+        throw new Error('The API returned an error: ' + err + ' (ERR: readData in )' + __dirname);
+    }
+};
+```
+
+- **Upgrade, del,... : read to my src**
 
 
