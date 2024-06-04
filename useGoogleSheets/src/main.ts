@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { createToken } from './Data/connectData/createToken';
 import fs from 'fs';
-import { readData } from './Data/handleData/handleData';
+import { readData, updateData } from './Data/handleData/handleData';
 
 const tokenPath: string = process.env.PATH_TOKEN || __dirname + '/token.json';
 const SHEETS_ID: string = process.env.SHEETS_ID || '';
@@ -12,7 +12,17 @@ const main = async (): Promise<any> => {
         .then((data) => {
         token = data;
     });
-    await readData(token, SHEETS_ID, 'Users');
+    // await readData(token, SHEETS_ID, 'Users');
+
+    await updateData(
+        token, 
+        SHEETS_ID, 
+        'Users!C4:D4', 
+        'USER_ENTERED', 
+        [
+            ['Test', 'Test']
+        ],
+    );
 };
 
 const readToken = async(): Promise<any>=> {
